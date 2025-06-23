@@ -1,36 +1,37 @@
-caracteres_aceptables = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-_+"
+caracteres_aceptables = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-_"
 
-while True:
-    email = input("Introduce tu email (o escribe 'salir' para terminar): ")
-
-    # Salida voluntaria
-    if email.lower() == "salir":
-        break
-
-    valido = True
-
-    # Paso 1: Validar que haya exactamente una arroba
+def validar_email(email):
     if email.count("@") != 1:
-        valido = False
+        return False
+    
+    nombre, dominio = email.split("@")
+
+    if not nombre or not dominio:
+        return False
+
+    if "." not in dominio or dominio.endswith("."):
+        return False
+
+    for c in nombre + dominio:
+        if c not in caracteres_aceptables:
+            return False
+
+    return True
+
+
+validos = []
+invalidos = []
+
+for correo in emails:
+    if validar_email(correo):
+        validos.append(correo)
     else:
-        nombre, dominio = email.split("@")
+        invalidos.append(correo)
 
-        # Paso 2: Verificar que nombre y dominio no estén vacíos
-        if not nombre or not dominio:
-            valido = False
+print("Correos válidos:")
+for c in validos:
+    print("  -", c)
 
-        # Paso 3: Verificar que los caracteres sean válidos
-        for caracter in nombre + dominio:
-            if caracter not in caracteres_aceptables:
-                valido = False
-                break
-
-        # Paso 4: Verificar que el dominio contenga al menos un punto y no termine en uno
-        if "." not in dominio or dominio.endswith("."):
-            valido = False
-
-    # Resultado
-    if valido:
-        print("El correo es válido.\n")
-    else:
-        print("El correo es inválido.\n")
+print("\n Correos inválidos:")
+for c in invalidos:
+    print("  -", c)
