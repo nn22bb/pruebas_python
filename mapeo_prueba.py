@@ -1,21 +1,22 @@
-notas = []
-
-print("Introduce notas numéricas. Escribe -1 para finalizar.")
+alumnos = []
 
 while True:
-    entrada = input("Nota: ")
-    if entrada == "-1":
+    entrada = input("Introduce nombre, edad y cursos separados por comas (o escribe 'salir'): ")
+    if entrada.lower() == "salir":
         break
-    try:
-        nota = float(entrada.replace(",", "."))
-        notas.append(nota)
-    except ValueError:
-        print("Formato no válido. Intenta de nuevo.")
 
-if notas:
-    print("\nNotas introducidas:", notas)
-    print("Primera nota:", notas[0])
-    print("Tres últimas:", notas[-3:])
-    print("De la segunda a la penúltima:", notas[1:-1])
+    try:
+        nombre, edad, cursos = entrada.split(",", 2)
+        edad = int(edad.strip())
+        lista_cursos = [curso.strip() for curso in cursos.split("-")]  # Por ejemplo: mates-historia-inglés
+        alumnos.append({"nombre": nombre.strip(), "edad": edad, "cursos": lista_cursos})
+    except ValueError:
+        print("Formato incorrecto. Usa: nombre, edad, curso1-curso2-curso3")
+
+# Mostrar base de datos
+if alumnos:
+    print("\nBase de datos de alumnos:")
+    for alumno in alumnos:
+        print(f"- {alumno['nombre']} ({alumno['edad']} años): {', '.join(alumno['cursos'])}")
 else:
-    print("No se ingresaron notas.")
+    print("No se registraron alumnos.")
