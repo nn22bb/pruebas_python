@@ -1,30 +1,22 @@
 import re
 
-# Patrón básico para validar correos electrónicos
-patron_email = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+patron_email = r"^[a-zA-Z0-9._+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
 
-emails_validos = [
-    "ejemplo@ejemplo.com",
-    "ejemplo+alias@ejemplo.com",
-    "nombre.apellido@ejemplo.co.uk",
-    "usuario123@dominio.io"
-]
+while True:
+    try:
+        correo = input("Introduce un correo (o escribe 'salir' para terminar): ")
+    except EOFError:
+        print("\n📴 Entrada finalizada inesperadamente.")
+        break
 
-emails_invalidos = [
-    "ejemplo@.com",
-    "ejemplo@com",
-    "@ejemplo.com",
-    "ejemplo@ejemplo.",
-    "ejemplo@@ejemplo.com"
-]
+    if not correo:
+        print("⚠️ No escribiste nada. Intenta de nuevo.")
+        continue
 
-def validar_emails(lista, tipo):
-    print(f"\nComprobando emails {tipo}:\n")
-    for email in lista:
-        if re.match(patron_email, email):
-            print(f"{email} es válido")
-        else:
-            print(f"{email} es inválido")
+    if correo.lower() == "salir":
+        break
 
-validar_emails(emails_validos, "válidos")
-validar_emails(emails_invalidos, "inválidos")
+    if re.match(patron_email, correo):
+        print("✅ Válido")
+    else:
+        print("❌ Inválido")
