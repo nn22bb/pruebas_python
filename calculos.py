@@ -18,3 +18,10 @@ print ("La división entera es: ", division_entera_numeros)
 
 modulo_numeros = n1 % n2
 print ("El módulo es: ", modulo_numeros)
+
+
+n3 = 100
+n4 = 50
+print(n1 > n2)
+print(n1 < n2)
+print(n1 >= n2)
