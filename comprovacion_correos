@@ -1,4 +1,4 @@
-caracteres_aceptables = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-_"
+caracteres_aceptables = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-_+"
 
 while True:
     email = input("Introduce tu email (o escribe 'salir' para terminar): ")
