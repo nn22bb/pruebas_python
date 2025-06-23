@@ -1,22 +1,36 @@
-import re
-
-patron_email = r"^[a-zA-Z0-9._+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+caracteres_aceptables = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-_"
 
 while True:
-    try:
-        correo = input("Introduce un correo (o escribe 'salir' para terminar): ")
-    except EOFError:
-        print("\n📴 Entrada finalizada inesperadamente.")
+    email = input("Introduce tu email (o escribe 'salir' para terminar): ")
+
+    # Salida voluntaria
+    if email.lower() == "salir":
         break
 
-    if not correo:
-        print("⚠️ No escribiste nada. Intenta de nuevo.")
-        continue
+    valido = True
 
-    if correo.lower() == "salir":
-        break
-
-    if re.match(patron_email, correo):
-        print("✅ Válido")
+    # Paso 1: Validar que haya exactamente una arroba
+    if email.count("@") != 1:
+        valido = False
     else:
-        print("❌ Inválido")
+        nombre, dominio = email.split("@")
+
+        # Paso 2: Verificar que nombre y dominio no estén vacíos
+        if not nombre or not dominio:
+            valido = False
+
+        # Paso 3: Verificar que los caracteres sean válidos
+        for caracter in nombre + dominio:
+            if caracter not in caracteres_aceptables:
+                valido = False
+                break
+
+        # Paso 4: Verificar que el dominio contenga al menos un punto y no termine en uno
+        if "." not in dominio or dominio.endswith("."):
+            valido = False
+
+    # Resultado
+    if valido:
+        print("El correo es válido.\n")
+    else:
+        print("El correo es inválido.\n")
