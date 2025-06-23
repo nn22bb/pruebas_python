@@ -1,37 +1,41 @@
-caracteres_aceptables = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-_"
+caracteres_aceptables = "qwertyuiopasdfghjklñzxcvbnmQWERTYUIOPASDFGHJKLÑZXCVBNM0123456789.-_"
 
-def validar_email(email):
+while True:
+    email = input("Introduce un correo (o escribe 'salir' para terminar): ")
+
+    if email.lower() == "salir":
+        break
+
+    valido = True
+
+    # Paso 1: Verificar que haya exactamente una "@"
     if email.count("@") != 1:
-        return False
-    
-    nombre, dominio = email.split("@")
-
-    if not nombre or not dominio:
-        return False
-
-    if "." not in dominio or dominio.endswith("."):
-        return False
-
-    for c in nombre + dominio:
-        if c not in caracteres_aceptables:
-            return False
-
-    return True
-
-
-validos = []
-invalidos = []
-
-for correo in emails:
-    if validar_email(correo):
-        validos.append(correo)
+        print("Error: debe haber exactamente una '@'")
+        valido = False
     else:
-        invalidos.append(correo)
+        email_dividido = email.split("@")
+        nombre = email_dividido[0]
+        dominio = email_dividido[1]
 
-print("Correos válidos:")
-for c in validos:
-    print("  -", c)
+        # Paso 2: Comprobar que nombre y dominio no estén vacíos
+        if not nombre or not dominio:
+            print("Error: el nombre o el dominio están vacíos.")
+            valido = False
 
-print("\n Correos inválidos:")
-for c in invalidos:
-    print("  -", c)
+        # Paso 3: Comprobar que el dominio tenga al menos un punto y no termine en punto
+        elif "." not in dominio or dominio.endswith("."):
+            print("Error: el dominio debe contener al menos un punto y no terminar en uno.")
+            valido = False
+
+        # Paso 4: Verificar caracteres uno por uno (excepto el "@")
+        else:
+            for caracter in nombre + dominio:
+                if caracter not in caracteres_aceptables:
+                    print(f"Carácter no permitido: '{caracter}'")
+                    valido = False
+                    break
+
+    if valido:
+        print("El correo es válido.\n")
+    else:
+        print("El correo es inválido.\n")
