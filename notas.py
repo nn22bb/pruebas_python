@@ -2,16 +2,19 @@ alumnos = []
 
 while True:
     entrada = input("Introduce nombre y nota separados por coma (o escribe 'salir'): ")
+    
     if entrada.lower() == "salir":
         break
 
     try:
         nombre, nota = entrada.split(",")
-        alumnos.append((nombre.strip(), float(nota.strip())))
+        nota = nota.strip().replace(",", ".")  # Permitir comas como separador decimal
+        nota_float = float(nota)
+        alumnos.append((nombre.strip(), nota_float))
     except ValueError:
-        print("Formato incorrecto. Debe ser: nombre, nota")
+        print("Formato incorrecto. Usa: nombre, nota   (ej. Ana, 7.5 o Jorge, 6,2)")
 
-# Mostrar resultados si hay alumnos registrados
+# Si se ingresaron datos, mostramos la información
 if alumnos:
     print("\n Todos los alumnos:")
     for nombre, nota in alumnos:
@@ -19,9 +22,8 @@ if alumnos:
 
     print(f"\n Primer alumno: {alumnos[0][0]} con nota {alumnos[0][1]}")
 
-    ultimos_tres = alumnos[-3:]
-    print("\n🔸 Últimos tres:")
-    for nombre, nota in ultimos_tres:
+    print("\n Últimos tres:")
+    for nombre, nota in alumnos[-3:]:
         print(f" - {nombre}: {nota}")
 
     print("\n🔹 Desde el segundo hasta el penúltimo:")
