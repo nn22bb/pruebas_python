@@ -1,35 +1,42 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
+import re
 
-# Diccionario que mapea rutas a funciones y métodos
+# Diccionario de rutas con funciones lambda
 rutas = {
-    ('GET', '/'): lambda: "Bienvenida a la página principal",
-    ('GET', '/about'): lambda: "Acerca de nosotros",
-    ('POST', '/datos'): lambda: "Procesando datos...",
-    ('PUT', '/recurso'): lambda: "Recurso actualizado",
-    ('DELETE', '/recurso'): lambda: "Recurso eliminado"
+    ('GET', '/books'): lambda: "Listado de todos los libros",
+    ('POST', '/books'): lambda: "Libro creado",
+    ('PUT', '/books/123'): lambda: "Libro 123 actualizado",
+    ('DELETE', '/books/123'): lambda: "Libro 123 eliminado"
 }
 
+# Función auxiliar para validar rutas
+def es_ruta_valida(path):
+    return re.match(r'^/[\w\-/]*$', path)
+
+# Servidor
 class MiManejador(BaseHTTPRequestHandler):
-    def do_GET(self):
-        self.responder('GET')
-
-    def do_POST(self):
-        self.responder('POST')
-
-    def do_PUT(self):
-        self.responder('PUT')
-
-    def do_DELETE(self):
-        self.responder('DELETE')
+    def do_GET(self): self.responder('GET')
+    def do_POST(self): self.responder('POST')
+    def do_PUT(self): self.responder('PUT')
+    def do_DELETE(self): self.responder('DELETE')
 
     def responder(self, metodo):
-        ruta_clave = (metodo, self.path)
-        if ruta_clave in rutas:
-            mensaje = rutas[ruta_clave]()
+        if not es_ruta_valida(self.path):
+            self.send_response(400)
+            mensaje = "Ruta inválida: contiene caracteres no permitidos"
+        elif (metodo, self.path) in rutas:
+            mensaje = rutas[(metodo, self.path)]()
             self.send_response(200)
         else:
-            mensaje = "Ruta o método no encontrado"
-            self.send_response(404)
+            # Si coincide con /books/<número>
+            match = re.match(r"^/books/(\d+)$", self.path)
+            if match:
+                book_id = match.group(1)
+                mensaje = f"Acceso dinámico al libro {book_id} con método {metodo}"
+                self.send_response(200)
+            else:
+                mensaje = "Ruta o método no encontrado"
+                self.send_response(404)
 
         self.send_header('Content-type', 'text/plain; charset=utf-8')
         self.end_headers()
