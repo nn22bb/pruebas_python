@@ -1,11 +1,19 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import re
 
-# Validación básica de la ruta
+# Diccionario de rutas con funciones lambda
+rutas = {
+    ('GET', '/movies'): lambda: "Listado de todas las películas",
+    ('POST', '/movies'): lambda: "Película creada",
+    ('PUT', '/movies/123'): lambda: "Película 123 actualizada",
+    ('DELETE', '/movies/123'): lambda: "Película 123 eliminada"
+}
+
+# Función auxiliar para validar rutas
 def es_ruta_valida(path):
     return re.match(r'^/[\w\-/]*$', path)
 
-# Manejador del servidor HTTP
+# Servidor
 class MiManejador(BaseHTTPRequestHandler):
     def do_GET(self): self.responder('GET')
     def do_POST(self): self.responder('POST')
@@ -16,32 +24,20 @@ class MiManejador(BaseHTTPRequestHandler):
         if not es_ruta_valida(self.path):
             self.send_response(400)
             mensaje = "Ruta inválida: contiene caracteres no permitidos"
+        elif (metodo, self.path) in rutas:
+            mensaje = rutas[(metodo, self.path)]()
+            self.send_response(200)
         else:
-            # Coincide con /categoría (sin ID)
-            match_simple = re.match(r"^/(\w+)$", self.path)
-            # Coincide con /categoría/id (con ID numérico)
-            match_con_id = re.match(r"^/(\w+)/(\d+)$", self.path)
-
-            if metodo == 'GET' and match_simple:
-                categoria = match_simple.group(1)
-                mensaje = f"Listado de todos los elementos en '{categoria}'"
-                self.send_response(200)
-            elif metodo == 'POST' and match_simple:
-                categoria = match_simple.group(1)
-                mensaje = f"Nuevo elemento creado en '{categoria}'"
-                self.send_response(201)
-            elif metodo in {'PUT', 'DELETE'} and match_con_id:
-                categoria, recurso_id = match_con_id.groups()
-                if metodo == 'PUT':
-                    mensaje = f"Elemento {recurso_id} actualizado en '{categoria}'"
-                else:
-                    mensaje = f"Elemento {recurso_id} eliminado de '{categoria}'"
+            # Si coincide con /movies/<número>
+            match = re.match(r"^/movies/(\d+)$", self.path)
+            if match:
+                movie_id = match.group(1)
+                mensaje = f"Acceso dinámico a la película {movie_id} con método {metodo}"
                 self.send_response(200)
             else:
                 mensaje = "Ruta o método no encontrado"
                 self.send_response(404)
 
-        print(f"Petición recibida: {metodo} {self.path}")
         self.send_header('Content-type', 'text/plain; charset=utf-8')
         self.end_headers()
         self.wfile.write(mensaje.encode())
